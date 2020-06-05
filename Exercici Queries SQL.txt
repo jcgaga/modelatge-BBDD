@@ -1,0 +1,62 @@
+-- Exercici Queries SQL
+
+-- Exercici 1
+SELECT COUNT(*) AS total 
+FROM flights;
+
+-- Exercici 2
+SELECT  Origin, 
+		AVG(ArrDelay) AS prom_arribades, 
+        AVG(DepDelay) AS prom_sortides 
+FROM flights 
+GROUP BY origin 
+ORDER BY Origin ASC;
+
+-- Exercici 3
+SELECT 	Origin, 
+		colYear, 
+        colMonth, 
+        AVG(ArrDelay) AS prom_arribades 
+FROM flights 
+GROUP BY Origin, colYear, colMonth 
+ORDER BY Origin, colYear ASC;
+
+-- Exercici 4
+SELECT  air.city, 
+		fli.colYear, 
+        fli.colMonth, 
+        AVG(fli.ArrDelay) AS prom_arribades 
+FROM flights AS fli
+INNER JOIN airports AS air ON (fli.dest = air.iata)
+GROUP BY air.city, fli.colYear, fli.colMonth 
+ORDER BY air.city, fli.colYear ASC;
+
+-- Exercici 5
+SELECT 	fli.UniqueCarrier, 
+		fli.colYear, 
+        fli.colMonth, 
+        count(fli.Cancelled) as total_cancelled
+FROM flights AS fli
+INNER JOIN carriers AS car ON (fli.UniqueCarrier = car.Code)
+WHERE fli.Cancelled = 1
+GROUP BY fli.UniqueCarrier, fli.colMonth, fli.colYear 
+ORDER BY total_cancelled DESC;
+
+-- Exercici 6
+SELECT  TailNum, 
+		SUM(Distance) AS totalDistance 
+FROM flights
+WHERE TailNum != ""
+GROUP BY TailNum
+ORDER BY totalDistance DESC
+LIMIT 10;
+
+-- Exercici 7
+SELECT * 
+FROM (SELECT fli.UniqueCarrier, 
+			 AVG(fli.ArrDelay) as avgDelay
+	  FROM flights AS fli
+	  INNER JOIN carriers AS car ON (fli.UniqueCarrier = car.Code)
+	  GROUP BY fli.UniqueCarrier
+	  ORDER BY avgDelay DESC) AS UniqueCarrierDelay
+WHERE UniqueCarrierDelay.avgDelay > 10;
